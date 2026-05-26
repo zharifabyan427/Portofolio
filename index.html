@@ -1,471 +1,631 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Cpu, 
-  Layers, 
-  Terminal, 
-  Network, 
-  Navigation, 
-  Twitter, 
-  Github, 
-  Linkedin,
-  ChevronRight,
-  Zap,
-  ShieldCheck,
-  Activity,
-  BookOpen,
-  Briefcase,
-  Mail,
-  MessageCircle,
-  X,
-  QrCode,
-  Copy,
-  ExternalLink,
-  Check
-} from 'lucide-react';
-
-const App = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [activeTab, setActiveTab] = useState('hero');
-  const [modalContent, setModalContent] = useState(null);
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-      
-      const sections = ['hero', 'skills', 'experience', 'blog'];
-      const currentSection = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top >= -100 && rect.top <= 300;
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Abyan Zharif - Pilot Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        return false;
-      });
-      if (currentSection) setActiveTab(currentSection);
-    };
+        .font-mono {
+            font-family: 'Space Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 selection:bg-yellow-400 selection:text-slate-900 overflow-x-hidden">
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      window.scrollTo({
-        top: element.offsetTop - 80,
-        behavior: 'smooth'
-      });
-      setActiveTab(id);
-    }
-  };
-
-  const handleCopyEmail = () => {
-    const email = "zharifabyan427@gmail.com";
-    const el = document.createElement('textarea');
-    el.value = email;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const navItems = [
-    { label: 'Hero', id: 'hero' },
-    { label: 'Specs', id: 'skills' },
-    { label: 'Journey', id: 'experience' },
-    { label: 'Blog', id: 'blog' }
-  ];
-
-  return (
-    <div className={`min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-yellow-400 selection:text-slate-900`}>
-      {/* Modal System */}
-      {modalContent && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-sm rounded-sm border-t-4 border-blue-700 shadow-2xl relative animate-in zoom-in-95 duration-300 overflow-hidden">
-            <button 
-              onClick={() => setModalContent(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-red-600 transition-colors z-10"
-            >
-              <X size={24} />
+    <!-- Modal System (WhatsApp & Email) -->
+    <div id="modal-overlay" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-sm transition-all duration-300">
+        <!-- Modal Card -->
+        <div id="modal-card" class="bg-white w-full max-w-sm rounded-sm border-t-4 border-blue-700 shadow-2xl relative transition-all duration-300 overflow-hidden transform scale-95 opacity-0">
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-red-600 transition-colors z-10">
+                <i data-lucide="x" class="w-6 h-6"></i>
             </button>
             
-            <div className="p-8 text-center">
-              {modalContent.type === 'wa' ? (
-                <div className="space-y-6">
-                  <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-4">
-                      <MessageCircle size={32} />
+            <div class="p-8 text-center">
+                <!-- WhatsApp Content Block -->
+                <div id="modal-content-wa" class="hidden space-y-6">
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-4">
+                            <i data-lucide="message-circle" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-black uppercase tracking-tighter">WhatsApp Contact</h3>
+                        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-1">Scan to start transmission</p>
                     </div>
-                    <h3 className="text-xl font-black uppercase tracking-tighter">WhatsApp Contact</h3>
-                    <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-1">Scan to start transmission</p>
-                  </div>
-                  
-                  {/* WhatsApp QR Display */}
-                  <div className="relative group">
-                    <div className="bg-[#128c7e] p-6 rounded-lg shadow-inner">
-                        {/* Menggunakan placeholder yang merepresentasikan gambar QR yang diupload */}
-                        <div className="bg-white p-4 rounded-md shadow-lg">
-                           <img 
-                            src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://wa.me/6281212905955" 
-                            alt="WhatsApp QR Code"
-                            className="w-full h-auto"
-                           />
+                    
+                    <!-- WhatsApp QR Code (Styled based on user's image) -->
+                    <div class="relative group">
+                        <div class="bg-[#25D366] p-6 rounded-2xl shadow-lg flex flex-col items-center">
+                            <!-- Avatar Circle -->
+                            <div class="w-14 h-14 bg-white rounded-full p-1 shadow-md mb-3 -mt-10 overflow-hidden flex items-center justify-center border-2 border-[#25D366]">
+                                <div class="w-full h-full bg-yellow-400 rounded-full flex items-center justify-center font-black text-slate-900 text-sm font-mono">
+                                    RX-78
+                                </div>
+                            </div>
+                            
+                            <!-- Main QR Card -->
+                            <div class="bg-white p-6 rounded-xl shadow-inner w-full flex flex-col items-center">
+                                <p class="text-base font-black text-slate-800 tracking-tight">mpruy</p>
+                                <p class="text-[10px] text-slate-400 font-semibold mb-4">Kontak WhatsApp</p>
+                                
+                                <!-- QR Image Generator -->
+                                <div class="p-2 border border-slate-100 rounded-lg">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://wa.me/6281212905955" alt="WhatsApp QR Code" class="w-44 h-44">
+                                </div>
+                                
+                                <!-- Scan Text Footer Inside Card -->
+                                <p class="text-[9px] text-slate-500 font-medium text-center leading-normal mt-4 px-2">
+                                    Pindai kode ini dengan kamera WhatsApp untuk mendapatkan nomor saya
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="text-xs text-slate-500 font-mono font-bold tracking-widest">+62 812-1290-5955</p>
                         </div>
                     </div>
-                    <div className="mt-4 text-center">
-                        <p className="text-sm font-bold text-slate-800">mpruy</p>
-                        <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Pindai kode ini untuk nomor saya</p>
-                    </div>
-                  </div>
 
-                  <a 
-                    href="https://wa.me/6281212905955" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full bg-slate-900 text-white py-4 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#25D366] transition-all group"
-                  >
-                    Buka WhatsApp <ExternalLink size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                  </a>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-4">
-                      <Mail size={32} />
-                    </div>
-                    <h3 className="text-xl font-black uppercase tracking-tighter">Transmission Mail</h3>
-                    <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-1">Direct communication line</p>
-                  </div>
-                  
-                  <div className="bg-slate-100 p-6 border-2 border-dashed border-slate-200 relative group">
-                    <p className="text-sm font-mono font-bold text-blue-700 break-all select-all">
-                      zharifabyan427@gmail.com
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <button 
-                      onClick={handleCopyEmail}
-                      className={`w-full border-2 border-slate-900 py-4 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${copied ? 'bg-green-500 border-green-500 text-white' : 'hover:bg-yellow-400'}`}
-                    >
-                      {copied ? <Check size={16} /> : <Copy size={16} />}
-                      {copied ? 'BERHASIL DISALIN' : 'SALIN ALAMAT EMAIL'}
-                    </button>
-                    <a 
-                      href="mailto:zharifabyan427@gmail.com"
-                      className="w-full bg-slate-900 text-white py-4 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-700 transition-all"
-                    >
-                      KIRIM EMAIL SEKARANG
+                    <a href="https://wa.me/6281212905955" target="_blank" rel="noopener noreferrer" class="w-full bg-slate-900 text-white py-4 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#25D366] transition-all group">
+                        Buka WhatsApp <i data-lucide="external-link" class="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
                     </a>
-                  </div>
                 </div>
-              )}
+
+                <!-- Email Content Block -->
+                <div id="modal-content-email" class="hidden space-y-6">
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-4">
+                            <i data-lucide="mail" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-black uppercase tracking-tighter">Transmission Mail</h3>
+                        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-1">Direct communication line</p>
+                    </div>
+                    
+                    <div class="bg-slate-100 p-6 border-2 border-dashed border-slate-200 relative">
+                        <p id="email-address-text" class="text-sm font-mono font-bold text-blue-700 break-all select-all">
+                            zharifabyan427@gmail.com
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <button onclick="copyEmailToClipboard()" id="btn-copy-email" class="w-full border-2 border-slate-900 py-4 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-yellow-400 transition-all">
+                            <i data-lucide="copy" class="w-4 h-4" id="copy-icon"></i>
+                            <span id="copy-text">SALIN ALAMAT EMAIL</span>
+                        </button>
+                        <a href="mailto:zharifabyan427@gmail.com" class="w-full bg-slate-900 text-white py-4 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-700 transition-all">
+                            KIRIM EMAIL SEKARANG
+                        </a>
+                    </div>
+                </div>
             </div>
             
-            <div className="bg-slate-50 py-3 px-8 border-t border-slate-100 flex justify-between items-center">
-              <span className="text-[9px] font-mono text-slate-400 uppercase tracking-[0.2em]">Secure Connection</span>
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 bg-blue-700 rounded-full animate-pulse"></div>
-                <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse delay-75"></div>
+            <div class="bg-slate-50 py-3 px-8 border-t border-slate-100 flex justify-between items-center">
+              <span class="text-[9px] font-mono text-slate-400 uppercase tracking-[0.2em]">Secure Connection</span>
+              <div class="flex gap-1">
+                <div class="w-1.5 h-1.5 bg-blue-700 rounded-full animate-pulse"></div>
+                <div class="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse delay-75"></div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+    </div>
 
-      {/* Navigasi */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'}`}>
-        <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center">
-            <div className="w-10 h-1 bg-blue-700"></div>
+    <!-- Navigation Header -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-transparent py-4">
+        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
+          <div class="flex items-center">
+            <div class="w-10 h-1 bg-blue-700 shadow-md shadow-blue-400"></div>
           </div>
           
-          <div className="flex bg-slate-100/50 p-1 rounded-full border border-slate-200">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className={`px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-                  activeTab === item.id 
-                    ? 'bg-slate-900 text-white shadow-md scale-105' 
-                    : 'text-slate-400 hover:text-slate-900'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+          <!-- Tab Navigation -->
+          <div class="flex bg-slate-100/60 p-1 rounded-full border border-slate-200 backdrop-blur-sm">
+            <button onclick="scrollToSection('hero')" data-nav-id="hero" class="nav-btn px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 bg-slate-900 text-white shadow-md scale-105">
+                Hero
+            </button>
+            <button onclick="scrollToSection('skills')" data-nav-id="skills" class="nav-btn px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 text-slate-400 hover:text-slate-900">
+                Specs
+            </button>
+            <button onclick="scrollToSection('experience')" data-nav-id="experience" class="nav-btn px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 text-slate-400 hover:text-slate-900">
+                Journey
+            </button>
+            <button onclick="scrollToSection('blog')" data-nav-id="blog" class="nav-btn px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 text-slate-400 hover:text-slate-900">
+                Blog
+            </button>
           </div>
 
-          <button className="hidden md:block bg-slate-900 text-white px-6 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all border-b-4 border-red-600 active:translate-y-1 active:border-b-0">
+          <button onclick="openModal('email')" class="hidden md:block bg-slate-900 text-white px-6 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all border-b-4 border-red-600 active:translate-y-1 active:border-b-0">
             CONNECT
           </button>
         </div>
-      </nav>
+    </nav>
 
-      {/* Hero Section */}
-      <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-blue-700/5 -skew-x-12 transform origin-top translate-x-20 z-0"></div>
-        <div className="max-w-6xl mx-auto px-6 z-10 w-full">
-          <div className="max-w-3xl">
-            <h1 className="text-6xl md:text-8xl font-black mb-6 leading-[0.9] tracking-tighter uppercase">
-              WELCOME TO <span className="text-blue-700">MY PAGE.</span>
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-blue-700/5 -skew-x-12 transform origin-top translate-x-20 z-0"></div>
+        <div class="max-w-6xl mx-auto px-6 z-10 w-full">
+          <div class="max-w-3xl">
+            <!-- V-Fin Yellow Alert Badge -->
+            <div class="inline-flex items-center gap-2 bg-yellow-400/20 text-yellow-700 border border-yellow-400 px-4 py-1.5 rounded-sm text-[10px] font-black tracking-[0.3em] mb-6 shadow-md">
+                <i data-lucide="zap" class="w-4 h-4"></i> SYSTEMS ONLINE: PILOT READY
+            </div>
+            <h1 class="text-6xl md:text-8xl font-black mb-6 leading-[0.9] tracking-tighter uppercase">
+              WELCOME TO <span class="text-blue-700">MY PAGE.</span>
             </h1>
-            <p className="text-lg text-slate-600 mb-8 leading-relaxed max-w-md border-l-4 border-yellow-400 pl-4">
+            <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-xl border-l-4 border-yellow-400 pl-4">
               Hai, Nama gue Muhammad Abyan Zharif. Gue adalah siswa SMK Cyber Media dari jurusan Teknik Jaringan Komputer dan Telekomunikasi.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <a 
-                href="https://www.instagram.com/byanzhrf_/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-blue-700 text-white px-8 py-4 font-black text-xs tracking-widest uppercase flex items-center gap-3 hover:bg-blue-800 transition-all shadow-lg shadow-blue-200"
-              >
-                FOLLOW ME <Navigation size={16} />
+            <div class="flex flex-wrap gap-4">
+              <a href="https://www.instagram.com/byanzhrf_/" target="_blank" rel="noopener noreferrer" class="bg-blue-700 text-white px-8 py-4 font-black text-xs tracking-widest uppercase flex items-center gap-3 hover:bg-blue-800 transition-all shadow-lg shadow-blue-200">
+                FOLLOW ME <i data-lucide="navigation" class="w-4 h-4"></i>
               </a>
-              <button 
-                onClick={() => scrollToSection('skills')}
-                className="bg-white border-2 border-slate-900 px-8 py-4 font-black text-xs tracking-widest uppercase hover:bg-yellow-400 transition-all"
-              >
+              <button onclick="scrollToSection('skills')" class="bg-white border-2 border-slate-900 px-8 py-4 font-black text-xs tracking-widest uppercase hover:bg-yellow-400 transition-all">
                 VIEW SCHEMATICS
               </button>
             </div>
           </div>
         </div>
-      </section>
+    </section>
 
-      {/* Skills Section */}
-      <section id="skills" className="py-24 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute right-0 top-0 opacity-10">
-          <Terminal size={400} strokeWidth={0.5} />
+    <!-- Skills Section (Specs) -->
+    <section id="skills" class="py-24 bg-slate-900 text-white relative overflow-hidden">
+        <div class="absolute right-0 top-0 opacity-10">
+          <i data-lucide="terminal" class="w-[400px] h-[400px]" stroke-width="0.5"></i>
         </div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="mb-20">
-            <h2 className="text-5xl font-black italic tracking-tighter mb-4 flex items-center gap-4">
-              <span className="text-yellow-400 font-mono text-xl not-italic">01/</span> TECHNICAL SPECS
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+          <div class="mb-20">
+            <h2 class="text-5xl font-black italic tracking-tighter mb-4 flex items-center gap-4">
+              <span class="text-yellow-400 font-mono text-xl not-italic">01/</span> TECHNICAL SPECS
             </h2>
-            <p className="text-slate-400 max-w-lg font-medium leading-relaxed">
+            <p class="text-slate-400 max-w-lg font-medium leading-relaxed">
                Ini adalah skill yang gua punya dan gua kuasai yang gua pelajari selama ini. Dengan skill ini gua yakin akan dapat membantu perusahaan.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: 'HTML', level: '85%', icon: <Layers className="text-orange-500" />, desc: 'Bikin struktur web yang solid dan SEO-friendly.' },
-              { title: 'PYTHON', level: '85%', icon: <Terminal className="text-blue-400" />, desc: 'Data processing dan automation script yang sat-set-sat-set.' },
-              { title: 'CISCO', level: '95%', icon: <Network className="text-blue-600" />, desc: 'Routing, switching, dan manage network traffic profesional.' },
-              { title: 'MIKROTIK', level: '90%', icon: <ShieldCheck className="text-red-500" />, desc: 'Configuring firewall, bandwidth, dan hotspot gateway.' }
-            ].map((skill, idx) => (
-              <div key={idx} className="bg-white/5 border-t-2 border-transparent hover:border-yellow-400 p-8 transition-all hover:bg-white/10 group">
-                <div className="mb-6 p-4 bg-white/5 inline-block group-hover:bg-blue-700/20 transition-colors">
-                  {skill.icon}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- HTML -->
+            <div class="bg-white/5 border-t-2 border-transparent hover:border-yellow-400 p-8 transition-all hover:bg-white/10 group">
+                <div class="mb-6 p-4 bg-white/5 inline-block text-orange-500 group-hover:bg-blue-700/20 transition-colors">
+                  <i data-lucide="layers" class="w-8 h-8"></i>
                 </div>
-                <h3 className="text-xl font-bold mb-2 tracking-widest">{skill.title}</h3>
-                <div className="flex justify-between text-[10px] font-mono mb-2 text-slate-400 uppercase">
+                <h3 class="text-xl font-bold mb-2 tracking-widest">HTML</h3>
+                <div class="flex justify-between text-[10px] font-mono mb-2 text-slate-400 uppercase">
                   <span>Power Level</span>
-                  <span className="text-yellow-400">{skill.level}</span>
+                  <span class="text-yellow-400">85%</span>
                 </div>
-                <div className="w-full h-1 bg-white/10 mb-4">
-                  <div className="h-full bg-blue-700" style={{ width: skill.level }}></div>
+                <div class="w-full h-1 bg-white/10 mb-4">
+                  <div class="h-full bg-blue-700 w-[85%]"></div>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed">{skill.desc}</p>
-              </div>
-            ))}
+                <p class="text-xs text-slate-500 leading-relaxed">Bikin struktur web yang solid dan SEO-friendly.</p>
+            </div>
+
+            <!-- Python -->
+            <div class="bg-white/5 border-t-2 border-transparent hover:border-yellow-400 p-8 transition-all hover:bg-white/10 group">
+                <div class="mb-6 p-4 bg-white/5 inline-block text-blue-400 group-hover:bg-blue-700/20 transition-colors">
+                  <i data-lucide="terminal" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 tracking-widest">PYTHON</h3>
+                <div class="flex justify-between text-[10px] font-mono mb-2 text-slate-400 uppercase">
+                  <span>Power Level</span>
+                  <span class="text-yellow-400">85%</span>
+                </div>
+                <div class="w-full h-1 bg-white/10 mb-4">
+                  <div class="h-full bg-blue-700 w-[85%]"></div>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed">Data processing dan automation script yang sat-set-sat-set.</p>
+            </div>
+
+            <!-- Cisco -->
+            <div class="bg-white/5 border-t-2 border-transparent hover:border-yellow-400 p-8 transition-all hover:bg-white/10 group">
+                <div class="mb-6 p-4 bg-white/5 inline-block text-blue-600 group-hover:bg-blue-700/20 transition-colors">
+                  <i data-lucide="network" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 tracking-widest">CISCO</h3>
+                <div class="flex justify-between text-[10px] font-mono mb-2 text-slate-400 uppercase">
+                  <span>Power Level</span>
+                  <span class="text-yellow-400">95%</span>
+                </div>
+                <div class="w-full h-1 bg-white/10 mb-4">
+                  <div class="h-full bg-blue-700 w-[95%]"></div>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed">Routing, switching, dan manage network traffic profesional.</p>
+            </div>
+
+            <!-- Mikrotik -->
+            <div class="bg-white/5 border-t-2 border-transparent hover:border-yellow-400 p-8 transition-all hover:bg-white/10 group">
+                <div class="mb-6 p-4 bg-white/5 inline-block text-red-500 group-hover:bg-blue-700/20 transition-colors">
+                  <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 tracking-widest">MIKROTIK</h3>
+                <div class="flex justify-between text-[10px] font-mono mb-2 text-slate-400 uppercase">
+                  <span>Power Level</span>
+                  <span class="text-yellow-400">90%</span>
+                </div>
+                <div class="w-full h-1 bg-white/10 mb-4">
+                  <div class="h-full bg-blue-700 w-[90%]"></div>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed">Configuring firewall, bandwidth, dan hotspot gateway.</p>
+            </div>
           </div>
         </div>
-      </section>
+    </section>
 
-      {/* Experience Section */}
-      <section id="experience" className="py-24 bg-white relative">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl font-black italic tracking-tighter mb-2 uppercase text-slate-900">MISSION JOURNEY</h2>
-            <div className="flex justify-center items-center gap-4">
-              <div className="h-0.5 w-12 bg-red-600"></div>
-              <span className="text-xs font-mono tracking-widest text-slate-400 uppercase">Education & Field Experience Log</span>
-              <div className="h-0.5 w-12 bg-red-600"></div>
+    <!-- Experience Section (Journey) -->
+    <section id="experience" class="py-24 bg-white relative">
+        <div class="max-w-5xl mx-auto px-6">
+          <div class="text-center mb-20">
+            <h2 class="text-5xl font-black italic tracking-tighter mb-2 uppercase text-slate-900">MISSION JOURNEY</h2>
+            <div class="flex justify-center items-center gap-4">
+              <div class="h-0.5 w-12 bg-red-600"></div>
+              <span class="text-xs font-mono tracking-widest text-slate-400 uppercase">Education & Field Experience Log</span>
+              <div class="h-0.5 w-12 bg-red-600"></div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            {[
-              { 
-                institution: 'SMK Cyber Media Jakarta', 
-                role: 'Siswa - Teknik Jaringan Komputer & Telekomunikasi', 
-                date: '2024 - 2027', 
-                details: ['Network Engineering', 'Cloud Computing', 'Cyber Security Foundations'], 
-                type: 'Pendidikan',
-                icon: <BookOpen className="text-blue-700" size={20} />
-              },
-              { 
-                institution: 'Kementerian Perindustrian RI', 
-                role: 'Praktik Kerja Lapangan (PKL)', 
-                date: '2026', 
-                details: ['IT Support', 'Infrastructure Maintenance', 'Digital Services'], 
-                type: 'Pengalaman',
-                icon: <Briefcase className="text-red-600" size={20} />
-              },
-              { 
-                institution: 'SMPN 43 Jakarta', 
-                role: 'Siswa', 
-                date: '2021 - 2024', 
-                details: ['Basic IT', 'School Organizations'], 
-                type: 'Pendidikan',
-                icon: <BookOpen className="text-slate-400" size={20} />
-              }
-            ].map((exp, idx) => (
-              <div key={idx} className="flex flex-col md:flex-row border border-slate-200 group hover:border-blue-700 transition-all cursor-default">
-                <div className="md:w-48 bg-slate-100 p-6 flex flex-col justify-center items-center text-center border-b md:border-b-0 md:border-r border-slate-200 group-hover:bg-blue-50 transition-colors">
-                  <span className="text-[10px] font-mono text-slate-400 mb-2 uppercase">{exp.date}</span>
-                  <div className={`text-[10px] font-black px-3 py-1 rounded-full border ${exp.type === 'Pendidikan' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-red-50 border-red-200 text-red-700'} uppercase tracking-tighter`}>
-                    {exp.type}
+          <div class="space-y-4">
+            <!-- SMK Cyber Media -->
+            <div class="flex flex-col md:flex-row border border-slate-200 group hover:border-blue-700 transition-all cursor-default">
+                <div class="md:w-48 bg-slate-100 p-6 flex flex-col justify-center items-center text-center border-b md:border-b-0 md:border-r border-slate-200 group-hover:bg-blue-50 transition-colors">
+                  <span class="text-[10px] font-mono text-slate-400 mb-2 uppercase">2024 - 2027</span>
+                  <div class="text-[10px] font-black px-3 py-1 rounded-full border bg-blue-50 border-blue-200 text-blue-700 uppercase tracking-tighter">
+                    Pendidikan
                   </div>
                 </div>
-                <div className="flex-1 p-8">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                    <div className="flex items-start gap-4">
-                      <div className="mt-1">{exp.icon}</div>
+                <div class="flex-1 p-8">
+                  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div class="flex items-start gap-4">
+                      <div class="mt-1 text-blue-700"><i data-lucide="book-open" class="w-5 h-5"></i></div>
                       <div>
-                        <h3 className="text-2xl font-black text-slate-900 group-hover:text-blue-700 transition-colors uppercase tracking-tight">{exp.institution}</h3>
-                        <p className="font-bold text-slate-500 uppercase text-xs tracking-[0.1em]">{exp.role}</p>
+                        <h3 class="text-2xl font-black text-slate-900 group-hover:text-blue-700 transition-colors uppercase tracking-tight">SMK Cyber Media Jakarta</h3>
+                        <p class="font-bold text-slate-500 uppercase text-xs tracking-[0.1em]">Siswa - Teknik Jaringan Komputer & Telekomunikasi</p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {exp.details.map((t, i) => (
-                        <span key={i} className="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">{t}</span>
-                      ))}
+                    <div class="flex flex-wrap gap-2">
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">Network Engineering</span>
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">Cloud Computing</span>
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">Cyber Security</span>
                     </div>
                   </div>
-                  <p className="text-slate-600 text-sm leading-relaxed max-w-2xl border-l-2 border-slate-200 pl-4">
+                  <p class="text-slate-600 text-sm leading-relaxed max-w-2xl border-l-2 border-slate-200 pl-4">
                     Fokus pada pengembangan kompetensi teknis di bidang infrastruktur jaringan dan teknologi informasi sesuai dengan target kurikulum dan pengalaman industri.
                   </p>
                 </div>
-                <div className="hidden md:flex w-16 items-center justify-center bg-slate-50 group-hover:bg-blue-700 group-hover:text-white transition-all">
-                  <ChevronRight size={24} />
+                <div class="hidden md:flex w-16 items-center justify-center bg-slate-50 group-hover:bg-blue-700 group-hover:text-white transition-all">
+                  <i data-lucide="chevron-right" class="w-6 h-6"></i>
                 </div>
-              </div>
-            ))}
+            </div>
+
+            <!-- Kemenperin PKL -->
+            <div class="flex flex-col md:flex-row border border-slate-200 group hover:border-blue-700 transition-all cursor-default">
+                <div class="md:w-48 bg-slate-100 p-6 flex flex-col justify-center items-center text-center border-b md:border-b-0 md:border-r border-slate-200 group-hover:bg-blue-50 transition-colors">
+                  <span class="text-[10px] font-mono text-slate-400 mb-2 uppercase">2026</span>
+                  <div class="text-[10px] font-black px-3 py-1 rounded-full border bg-red-50 border-red-200 text-red-700 uppercase tracking-tighter">
+                    Pengalaman
+                  </div>
+                </div>
+                <div class="flex-1 p-8">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div class="flex items-start gap-4">
+                      <div class="mt-1 text-red-600"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
+                      <div>
+                        <h3 class="text-2xl font-black text-slate-900 group-hover:text-blue-700 transition-colors uppercase tracking-tight">Kementerian Perindustrian RI</h3>
+                        <p class="font-bold text-slate-500 uppercase text-xs tracking-[0.1em]">Praktik Kerja Lapangan (PKL)</p>
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2 md:mt-0">
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">IT Support</span>
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">Infrastructure</span>
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">Digital Services</span>
+                    </div>
+                  </div>
+                  <p class="text-slate-600 text-sm leading-relaxed max-w-2xl border-l-2 border-slate-200 pl-4 mt-4">
+                    Fokus pada pengembangan kompetensi teknis di bidang infrastruktur jaringan dan teknologi informasi sesuai dengan target kurikulum dan pengalaman industri.
+                  </p>
+                </div>
+                <div class="hidden md:flex w-16 items-center justify-center bg-slate-50 group-hover:bg-blue-700 group-hover:text-white transition-all">
+                  <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <!-- SMPN 43 -->
+            <div class="flex flex-col md:flex-row border border-slate-200 group hover:border-blue-700 transition-all cursor-default">
+                <div class="md:w-48 bg-slate-100 p-6 flex flex-col justify-center items-center text-center border-b md:border-b-0 md:border-r border-slate-200 group-hover:bg-blue-50 transition-colors">
+                  <span class="text-[10px] font-mono text-slate-400 mb-2 uppercase">2021 - 2024</span>
+                  <div class="text-[10px] font-black px-3 py-1 rounded-full border bg-blue-50 border-blue-200 text-blue-700 uppercase tracking-tighter">
+                    Pendidikan
+                  </div>
+                </div>
+                <div class="flex-1 p-8">
+                  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div class="flex items-start gap-4">
+                      <div class="mt-1 text-slate-400"><i data-lucide="book-open" class="w-5 h-5"></i></div>
+                      <div>
+                        <h3 class="text-2xl font-black text-slate-900 group-hover:text-blue-700 transition-colors uppercase tracking-tight">SMPN 43 Jakarta</h3>
+                        <p class="font-bold text-slate-500 uppercase text-xs tracking-[0.1em]">Siswa</p>
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">Basic IT</span>
+                      <span class="text-[9px] font-mono bg-slate-900 text-white px-2 py-1 uppercase tracking-widest">Organizations</span>
+                    </div>
+                  </div>
+                  <p class="text-slate-600 text-sm leading-relaxed max-w-2xl border-l-2 border-slate-200 pl-4">
+                    Fokus pada pengembangan kompetensi teknis di bidang infrastruktur jaringan dan teknologi informasi sesuai dengan target kurikulum dan pengalaman industri.
+                  </p>
+                </div>
+                <div class="hidden md:flex w-16 items-center justify-center bg-slate-50 group-hover:bg-blue-700 group-hover:text-white transition-all">
+                  <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </div>
+            </div>
           </div>
         </div>
-      </section>
+    </section>
 
-      {/* Blog Section */}
-      <section id="blog" className="py-24 bg-blue-700 text-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex justify-between items-end mb-16">
+    <!-- Blog Section -->
+    <section id="blog" class="py-24 bg-blue-700 text-white">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="flex justify-between items-end mb-16">
             <div>
-              <h2 className="text-5xl font-black italic tracking-tighter uppercase leading-none">LOG ENTRIES</h2>
-              <p className="text-blue-100 mt-4 font-medium tracking-wide border-l-2 border-yellow-400 pl-4 uppercase text-xs">Pilot Daily Activities & Technical Journals</p>
+              <h2 class="text-5xl font-black italic tracking-tighter uppercase leading-none">LOG ENTRIES</h2>
+              <p class="text-blue-100 mt-4 font-medium tracking-wide border-l-2 border-yellow-400 pl-4 uppercase text-xs">Pilot Daily Activities & Technical Journals</p>
             </div>
-            <div className="text-right">
-               <p className="text-[10px] font-mono mb-2 opacity-60">ACCESSING ARCHIVES...</p>
-               <div className="h-1 w-32 bg-white/20">
-                  <div className="h-full w-1/2 bg-yellow-400"></div>
+            <div class="text-right">
+               <p class="text-[10px] font-mono mb-2 opacity-60">ACCESSING ARCHIVES...</p>
+               <div class="h-1 w-32 bg-white/20">
+                  <div class="h-full w-1/2 bg-yellow-400"></div>
                </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {[1, 2].map((i) => (
-              <div key={i} className="bg-slate-900 group cursor-pointer overflow-hidden relative">
-                <div className="h-72 bg-slate-800 relative">
-                  <div className="absolute inset-0 bg-blue-900/40 group-hover:bg-transparent transition-all"></div>
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-                    <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse delay-75"></span>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- Blog 1 -->
+            <div class="bg-slate-900 group cursor-pointer overflow-hidden relative">
+                <div class="h-72 bg-slate-800 relative">
+                  <div class="absolute inset-0 bg-blue-900/40 group-hover:bg-transparent transition-all"></div>
+                  <div class="absolute top-4 right-4 flex gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse delay-75"></span>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="bg-white text-slate-900 font-black text-xs px-6 py-3 uppercase tracking-widest">READ_LOG</button>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="bg-white text-slate-900 font-black text-xs px-6 py-3 uppercase tracking-widest">READ_LOG</button>
                   </div>
                 </div>
-                <div className="p-8 border-l-4 border-red-600">
-                  <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400 mb-4 uppercase">
-                    <span>2024.04.12</span>
+                <div class="p-8 border-l-4 border-red-600">
+                  <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400 mb-4 uppercase">
+                    <span>2026.05.20</span>
                     <span>/</span>
-                    <span className="text-yellow-400">NETWORK_LOG</span>
+                    <span class="text-yellow-400">NETWORK_LOG</span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 group-hover:text-blue-400 transition-colors uppercase leading-tight">
+                  <h3 class="text-2xl font-bold mb-4 group-hover:text-blue-400 transition-colors uppercase leading-tight">
                     Trik Optimalisasi Mikrotik Biar Anti Ngelag Pas High Traffic
                   </h3>
-                  <p className="text-slate-400 text-sm mb-6 line-clamp-2">
+                  <p class="text-slate-400 text-sm mb-6 line-clamp-2">
                     Jujurly, manage bandwidth itu gampang-gampang susah. Di log kali ini gue share gimana caranya queue tree kerja maksimal...
                   </p>
                 </div>
-              </div>
-            ))}
+            </div>
+
+            <!-- Blog 2 -->
+            <div class="bg-slate-900 group cursor-pointer overflow-hidden relative">
+                <div class="h-72 bg-slate-800 relative">
+                  <div class="absolute inset-0 bg-blue-900/40 group-hover:bg-transparent transition-all"></div>
+                  <div class="absolute top-4 right-4 flex gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse delay-75"></span>
+                  </div>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="bg-white text-slate-900 font-black text-xs px-6 py-3 uppercase tracking-widest">READ_LOG</button>
+                  </div>
+                </div>
+                <div class="p-8 border-l-4 border-red-600">
+                  <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400 mb-4 uppercase">
+                    <span>2026.05.15</span>
+                    <span>/</span>
+                    <span class="text-yellow-400">DEV_LOG</span>
+                  </div>
+                  <h3 class="text-2xl font-bold mb-4 group-hover:text-blue-400 transition-colors uppercase leading-tight">
+                    Belajar Python Automation Script Buat SysAdmin Pemula
+                  </h3>
+                  <p class="text-slate-400 text-sm mb-6 line-clamp-2">
+                    Honestly, bikin kerjaan repetitif jadi auto-run pakai script Python itu life-changing banget bagi network admin yang repot...
+                  </p>
+                </div>
+            </div>
           </div>
         </div>
-      </section>
+    </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-950 text-white py-16 border-t border-white/5">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-white py-16 border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
             <div>
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-6 h-6 bg-red-600"></div>
-                <span className="font-black italic text-xl tracking-tighter">MECHA.DEV</span>
+              <div class="flex items-center gap-2 mb-6">
+                <div class="w-6 h-6 bg-red-600 shadow-sm shadow-red-400"></div>
+                <span class="font-black italic text-xl tracking-tighter">MECHA.DEV</span>
               </div>
-              <p className="text-slate-500 text-sm leading-relaxed">
+              <p class="text-slate-500 text-sm leading-relaxed">
                 Platform dokumentasi sistem dan riwayat pertempuran digital gue. Built for performance, designed for impact.
               </p>
             </div>
-            <div className="flex flex-col gap-4">
-              <h4 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-2">QUICK_ACCESS</h4>
-              {navItems.map(item => (
-                <button 
-                  key={item.id} 
-                  onClick={() => scrollToSection(item.id)}
-                  className="text-sm font-bold text-left hover:text-blue-500 transition-colors uppercase italic"
-                >
-                  {item.label}
-                </button>
-              ))}
+            <div class="flex flex-col gap-4">
+              <h4 class="font-black text-xs uppercase tracking-widest text-slate-400 mb-2">QUICK_ACCESS</h4>
+              <button onclick="scrollToSection('hero')" class="text-sm font-bold text-left hover:text-blue-500 transition-colors uppercase italic">Home</button>
+              <button onclick="scrollToSection('skills')" class="text-sm font-bold text-left hover:text-blue-500 transition-colors uppercase italic">Specs</button>
+              <button onclick="scrollToSection('experience')" class="text-sm font-bold text-left hover:text-blue-500 transition-colors uppercase italic">Journey</button>
+              <button onclick="scrollToSection('blog')" class="text-sm font-bold text-left hover:text-blue-500 transition-colors uppercase italic">Blog</button>
             </div>
             <div>
-              <h4 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-6">TRANSMISSION_CHANNELS</h4>
-              <div className="flex gap-4">
-                {/* Email Trigger */}
-                <button 
-                  onClick={() => setModalContent({ type: 'email' })}
-                  className="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-700 transition-all group"
-                  title="Show Email"
-                >
-                  <Mail size={20} className="group-hover:scale-110 transition-transform" />
+              <h4 class="font-black text-xs uppercase tracking-widest text-slate-400 mb-6">TRANSMISSION_CHANNELS</h4>
+              <div class="flex gap-4">
+                <!-- Email Trigger -->
+                <button onclick="openModal('email')" class="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-700 transition-all group" title="Show Email">
+                  <i data-lucide="mail" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                 </button>
-                {/* WhatsApp Trigger */}
-                <button 
-                  onClick={() => setModalContent({ type: 'wa' })}
-                  className="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-green-600 transition-all group"
-                  title="Show QR WhatsApp"
-                >
-                  <MessageCircle size={20} className="group-hover:scale-110 transition-transform" />
+                <!-- WhatsApp Trigger -->
+                <button onclick="openModal('wa')" class="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-green-600 transition-all group" title="Show QR WhatsApp">
+                  <i data-lucide="message-circle" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                 </button>
-                <a 
-                  href="https://github.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-slate-700 transition-all group"
-                  title="GitHub"
-                >
-                  <Github size={20} className="group-hover:scale-110 transition-transform" />
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-slate-700 transition-all group" title="GitHub">
+                  <i data-lucide="github" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                 </a>
               </div>
             </div>
           </div>
-          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[10px] font-mono text-slate-600">© 2024 RX-PILOT. ALL SYSTEMS OPERATIONAL.</p>
-            <div className="flex gap-4 text-[10px] font-mono text-slate-600">
+          <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] font-mono text-slate-600">&copy; 2026 RX-PILOT. ALL SYSTEMS OPERATIONAL.</p>
+            <div class="flex gap-4 text-[10px] font-mono text-slate-600">
               <span>LATENCY: 12ms</span>
-              <span className="text-green-500">ENCRYPTION: ON</span>
+              <span class="text-green-500">ENCRYPTION: ON</span>
             </div>
           </div>
         </div>
-      </footer>
-    </div>
-  );
-};
+    </footer>
 
-export default App;
+    <!-- Interactive Logic scripts -->
+    <script>
+        // Init Lucide Icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            setupScrollSpy();
+        });
+
+        // Sticky & Transparent Navbar on Scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white/90', 'backdrop-blur-md', 'shadow-lg', 'py-2');
+                navbar.classList.remove('bg-transparent', 'py-4');
+            } else {
+                navbar.classList.add('bg-transparent', 'py-4');
+                navbar.classList.remove('bg-white/90', 'backdrop-blur-md', 'shadow-lg', 'py-2');
+            }
+        });
+
+        // Smooth Scroll Controller
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                window.scrollTo({
+                    top: element.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                updateActiveTab(id);
+            }
+        }
+
+        // Setup Active Tab updates on scroll (Scroll Spy)
+        function setupScrollSpy() {
+            const sections = ['hero', 'skills', 'experience', 'blog'];
+            
+            window.addEventListener('scroll', () => {
+                let currentSection = 'hero';
+                for (const section of sections) {
+                    const el = document.getElementById(section);
+                    if (el) {
+                        const rect = el.getBoundingClientRect();
+                        // If section is roughly visible in view
+                        if (rect.top <= 120 && rect.bottom >= 120) {
+                            currentSection = section;
+                            break;
+                        }
+                    }
+                }
+                updateActiveTab(currentSection);
+            });
+        }
+
+        // Update Nav Link Active Look
+        function updateActiveTab(activeId) {
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                const navId = btn.getAttribute('data-nav-id');
+                if (navId === activeId) {
+                    btn.className = "nav-btn px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 bg-slate-900 text-white shadow-md scale-105";
+                } else {
+                    btn.className = "nav-btn px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 text-slate-400 hover:text-slate-900";
+                }
+            });
+        }
+
+        // Modal triggers
+        function openModal(type) {
+            const overlay = document.getElementById('modal-overlay');
+            const card = document.getElementById('modal-card');
+            const waContent = document.getElementById('modal-content-wa');
+            const emailContent = document.getElementById('modal-content-email');
+
+            // Set content visibilities
+            if (type === 'wa') {
+                waContent.classList.remove('hidden');
+                emailContent.classList.add('hidden');
+            } else if (type === 'email') {
+                emailContent.classList.remove('hidden');
+                waContent.classList.add('hidden');
+            }
+
+            // Show Overlay
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+
+            // Trigger Transition animation
+            setTimeout(() => {
+                card.classList.remove('scale-95', 'opacity-0');
+                card.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
+            const card = document.getElementById('modal-card');
+
+            // Trigger reverse transition
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 300);
+        }
+
+        // Copy Email to clipboard implementation
+        function copyEmailToClipboard() {
+            const email = "zharifabyan427@gmail.com";
+            
+            // Temporary DOM copy approach
+            const tempInput = document.createElement("textarea");
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Change UI style to success state
+            const copyBtn = document.getElementById('btn-copy-email');
+            const copyText = document.getElementById('copy-text');
+            const copyIcon = document.getElementById('copy-icon');
+
+            copyBtn.classList.remove('hover:bg-yellow-400');
+            copyBtn.classList.add('bg-green-500', 'border-green-500', 'text-white');
+            copyText.textContent = "BERHASIL DISALIN!";
+            copyIcon.setAttribute('data-lucide', 'check');
+            lucide.createIcons();
+
+            setTimeout(() => {
+                copyBtn.classList.add('hover:bg-yellow-400');
+                copyBtn.classList.remove('bg-green-500', 'border-green-500', 'text-white');
+                copyText.textContent = "SALIN ALAMAT EMAIL";
+                copyIcon.setAttribute('data-lucide', 'copy');
+                lucide.createIcons();
+            }, 2000);
+        }
+    </script>
+</body>
+  </html>
